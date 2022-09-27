@@ -86,7 +86,7 @@ void main()
     vec3 lightDir = normalize(lightVec);
 
 
-    float dotNL = max(dot(normal, lightDir), 0.0);
+    float dotNL = max(dot(normal, lightDir), 0.005);
 
   // Result
   o_color = vec4(diffuse * dotNL, 1);
