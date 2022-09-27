@@ -47,9 +47,9 @@ START_BINDING(SceneBindings)
 END_BINDING();
 
 START_BINDING(PlanetType)
-	sun = 0,
-	earth = 1,
-	moon = 2
+	eSun = 0,
+	eEarth = 1,
+	eMoon = 2
 END_BINDING();
 
 // clang-format on

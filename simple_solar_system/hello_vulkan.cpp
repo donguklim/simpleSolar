@@ -208,7 +208,7 @@ void HelloVulkan::loadModel(const std::string& filename, PlanetType planet)
 
   std::vector<std::string> textures;
   textures.emplace_back(filePath + "/diffuse.png");
-  if (planet == PlanetType::earth)
+  if (planet == PlanetType::eEarth)
   {
       textures.emplace_back(filePath + "/normal.png");
       m_earthRadius = loader.m_vertices[0].pos.norm() * m_earthScale;
@@ -399,7 +399,7 @@ void HelloVulkan::rasterize(const VkCommandBuffer& cmdBuf, const float elapse)
   {
     auto& model            = m_objModel[inst.objIndex];
     m_pcRaster.objIndex    = inst.objIndex;  // Telling which object is drawn
-    if (inst.planet == PlanetType::earth)
+    if (inst.planet == PlanetType::eEarth)
     {
         m_pcRaster.modelMatrix = nvmath::mat4f(1)\
             .rotate(nv_two_pi * elapse / 365.0f, nvmath::vec3f(0, 1.0f, 0))\
@@ -407,7 +407,7 @@ void HelloVulkan::rasterize(const VkCommandBuffer& cmdBuf, const float elapse)
             .rotate(nv_two_pi * elapse / 1.0f, nvmath::vec3f(0, 1.0f, 0))\
             .scale(m_earthScale);
     }
-    else if (inst.planet == PlanetType::moon)
+    else if (inst.planet == PlanetType::eMoon)
     {
         m_pcRaster.modelMatrix = nvmath::mat4f(1)\
             .rotate(nv_two_pi * elapse / 365.0f, nvmath::vec3f(0, 1.0f, 0))\

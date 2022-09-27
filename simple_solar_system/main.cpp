@@ -59,7 +59,6 @@ void renderUI(HelloVulkan& helloVk)
   {
     ImGui::SameLine();
 
-    ImGui::SliderFloat3("Position", &helloVk.m_pcRaster.lightPosition.x, -20.f, 20.f);
     ImGui::SliderFloat("Intensity", &helloVk.m_pcRaster.lightIntensity, 0.f, 150.f);
   }
 }
@@ -151,9 +150,9 @@ int main(int argc, char** argv)
   // Creation of the example
   //helloVk.loadModel(nvh::findFile("model/earth/cube_multi.obj", defaultSearchPaths, true));
   //helloVk.loadModel(nvh::findFile("model/earth/geometry.obj", defaultSearchPaths, true));
-  helloVk.loadModel(nvh::findFile("model/sun/geometry.obj", defaultSearchPaths, true), PlanetType::sun);
-  helloVk.loadModel(nvh::findFile("model/earth/geometry.obj", defaultSearchPaths, true), PlanetType::earth);
-  helloVk.loadModel(nvh::findFile("model/moon/geometry.obj", defaultSearchPaths, true), PlanetType::moon);
+  helloVk.loadModel(nvh::findFile("model/sun/geometry.obj", defaultSearchPaths, true), PlanetType::eSun);
+  helloVk.loadModel(nvh::findFile("model/earth/geometry.obj", defaultSearchPaths, true), PlanetType::eEarth);
+  helloVk.loadModel(nvh::findFile("model/moon/geometry.obj", defaultSearchPaths, true), PlanetType::eMoon);
 
   helloVk.createOffscreenRender();
   helloVk.createDescriptorSetLayout();

@@ -55,18 +55,26 @@ void main()
 {
     // Material of the object
   ObjDesc    objResource = objDesc.i[pcRaster.objIndex];
+
+  // Diffuse
+  vec3 diffuse = texture(textureSamplers[objResource.txtOffset], i_texCoord).xyz;
+
+  if(pcRaster.planetType == eSun)
+  {
+    o_color = vec4(diffuse, 1);
+    return;
+  }
+
+
   vec3 N = normalize(i_worldNrm);
 
-
-
-  if(pcRaster.planetType == 1)
+  if(pcRaster.planetType == eEarth)
   {
     N = texture(textureSamplers[objResource.txtOffset + 1], i_texCoord).xyz;
   }
 
 
-  // Diffuse
-  vec3 diffuse = texture(textureSamplers[objResource.txtOffset], i_texCoord).xyz;
+  
 
   // Result
   o_color = vec4(diffuse, 1);
