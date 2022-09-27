@@ -185,19 +185,12 @@ void HelloVulkan::createGraphicsPipeline()
 //--------------------------------------------------------------------------------------------------
 // Loading the OBJ file and setting up all buffers
 //
-void HelloVulkan::loadModel(const std::string& filename, nvmath::mat4f transform)
+void HelloVulkan::loadModel(const std::string& filename, nvmath::mat4f transform, bool loadNorm)
 {
   LOGI("Loading File:  %s \n", filename.c_str());
   ObjLoader loader;
   loader.loadModel(filename);
 
-  // Converting from Srgb to linear
-  for(auto& m : loader.m_materials)
-  {
-    m.ambient  = nvmath::pow(m.ambient, 2.2f);
-    m.diffuse  = nvmath::pow(m.diffuse, 2.2f);
-    m.specular = nvmath::pow(m.specular, 2.2f);
-  }
 
   ObjModel model;
   model.nbIndices  = static_cast<uint32_t>(loader.m_indices.size());
@@ -211,7 +204,16 @@ void HelloVulkan::loadModel(const std::string& filename, nvmath::mat4f transform
   model.indexBuffer         = m_alloc.createBuffer(cmdBuf, loader.m_indices, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | flag);
   // Creates all textures found and find the offset for this model
   auto txtOffset = static_cast<uint32_t>(m_textures.size());
-  createTextureImages(cmdBuf, loader.m_textures);
+  auto filePath = nvh::getFilePath(filename.c_str());
+
+  std::vector<std::string> textures;
+  textures.emplace_back(filePath + "/diffuse.png");
+  if (loadNorm)
+  {
+
+  }
+
+  createTextureImages(cmdBuf, textures);
   cmdBufGet.submitAndWait(cmdBuf);
   m_alloc.finalizeAndReleaseStaging();
 
@@ -304,7 +306,7 @@ void HelloVulkan::createTextureImages(const VkCommandBuffer& cmdBuf, const std::
     {
       std::stringstream o;
       int               texWidth, texHeight, texChannels;
-      o << "media/textures/" << texture;
+      o << texture;
       std::string txtFile = nvh::findFile(o.str(), defaultSearchPaths, true);
 
       stbi_uc* stbi_pixels = stbi_load(txtFile.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);

@@ -40,7 +40,7 @@ public:
   void setup(const VkInstance& instance, const VkDevice& device, const VkPhysicalDevice& physicalDevice, uint32_t queueFamily) override;
   void createDescriptorSetLayout();
   void createGraphicsPipeline();
-  void loadModel(const std::string& filename, nvmath::mat4f transform = nvmath::mat4f(1));
+  void loadModel(const std::string& filename, nvmath::mat4f transform = nvmath::mat4f(1), bool loadNorm = false);
   void updateDescriptorSet();
   void createUniformBuffer();
   void createObjDescriptionBuffer();
