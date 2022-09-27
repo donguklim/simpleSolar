@@ -69,8 +69,8 @@ void renderUI(HelloVulkan& helloVk)
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-static int const SAMPLE_WIDTH  = 1280;
-static int const SAMPLE_HEIGHT = 720;
+static int const SAMPLE_WIDTH  = 2000;
+static int const SAMPLE_HEIGHT = 1000;
 
 
 //--------------------------------------------------------------------------------------------------
@@ -92,7 +92,7 @@ int main(int argc, char** argv)
 
   // Setup camera
   CameraManip.setWindowSize(SAMPLE_WIDTH, SAMPLE_HEIGHT);
-  CameraManip.setLookat(nvmath::vec3f(0.0f, 0.0f, 4500.0f), nvmath::vec3f(0, 0, 0), nvmath::vec3f(0, 1, 0));
+  CameraManip.setLookat(nvmath::vec3f(0.0f, 4500.0f, 0.0f), nvmath::vec3f(0, 0, 0), nvmath::vec3f(0, 0, 1));
 
   // Setup Vulkan
   if(!glfwVulkanSupported())
@@ -154,7 +154,7 @@ int main(int argc, char** argv)
   //helloVk.loadModel(nvh::findFile("model/earth/cube_multi.obj", defaultSearchPaths, true));
   //helloVk.loadModel(nvh::findFile("model/earth/geometry.obj", defaultSearchPaths, true));
   helloVk.loadModel(nvh::findFile("model/sun/geometry.obj", defaultSearchPaths, true), Planet::sun);
-  //helloVk.loadModel(nvh::findFile("model/earth/geometry.obj", defaultSearchPaths, true), Planet::earth);
+  helloVk.loadModel(nvh::findFile("model/earth/geometry.obj", defaultSearchPaths, true), Planet::earth);
 
   helloVk.createOffscreenRender();
   helloVk.createDescriptorSetLayout();

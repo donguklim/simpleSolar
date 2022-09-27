@@ -61,7 +61,7 @@ void HelloVulkan::updateUniformBuffer(const VkCommandBuffer& cmdBuf)
   const float    aspectRatio = m_size.width / static_cast<float>(m_size.height);
   GlobalUniforms hostUBO     = {};
   const auto&    view        = CameraManip.getMatrix();
-  const auto&    proj        = nvmath::perspectiveVK(CameraManip.getFov(), aspectRatio, 0.1f, 100000.0f);
+  const auto&    proj        = nvmath::perspectiveVK(CameraManip.getFov(), aspectRatio, 0.0000001f, 100000.0f);
   // proj[1][1] *= -1;  // Inverting Y for Vulkan (not needed with perspectiveVK).
 
   hostUBO.viewProj    = proj * view;
@@ -225,6 +225,7 @@ void HelloVulkan::loadModel(const std::string& filename, Planet planet)
   ObjInstance instance;
   instance.planet = planet;
   instance.objIndex  = static_cast<uint32_t>(m_objModel.size());
+  instance.radius = loader.m_vertices[0].pos.norm();
   m_instances.push_back(instance);
 
   // Creating information for device access
@@ -400,14 +401,20 @@ void HelloVulkan::rasterize(const VkCommandBuffer& cmdBuf, const float elapse)
     m_pcRaster.objIndex    = inst.objIndex;  // Telling which object is drawn
     if (inst.planet == Planet::earth)
     {
+        
+        m_pcRaster.modelMatrix = nvmath::mat4f(1)\
+            .scale(0.5f)\
+            .rotate(nv_two_pi * elapse / 365.0f, nvmath::vec3f(0, 1.0f, 0))\
+            .translate(nvmath::vec3f(inst.radius * 8, 0, 0))\
+            .rotate(nv_two_pi * elapse / 1.0f, nvmath::vec3f(0, 1.0f, 0));
     }
     else if (inst.planet == Planet::moon)
     {
-
+        
     }
     else
     {
-        m_pcRaster.modelMatrix = nvmath::mat4f(1).rotate(nv_two_pi * elapse / 30.0f, nvmath::vec3f(0, 0, 1.0f));
+        m_pcRaster.modelMatrix = nvmath::mat4f(1).rotate(nv_two_pi * elapse / 30.0f, nvmath::vec3f(0, 1.0f, 0.0f));
     }
 
     vkCmdPushConstants(cmdBuf, m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,

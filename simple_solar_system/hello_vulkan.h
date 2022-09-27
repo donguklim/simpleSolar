@@ -71,6 +71,7 @@ public:
   struct ObjInstance
   {
     Planet planet;
+    float radius;
     uint32_t      objIndex{0};  // Model index reference
   };
 
