@@ -1,0 +1,6 @@
+**/spv/*.spv
+/build/*
+/out/build
+/out/install
+/.vs
+/bin_x64
