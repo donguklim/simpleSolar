@@ -19,6 +19,17 @@
 
 #include "host_device.h"
 
+
+void createCoordinateSystem(in vec3 N, out vec3 Nt, out vec3 Nb)
+{
+    if (abs(N.x) > abs(N.y))
+        Nt = vec3(N.z, 0, -N.x) / sqrt(N.x * N.x + N.z * N.z);
+    else
+        Nt = vec3(0, -N.z, N.y) / sqrt(N.y * N.y + N.z * N.z);
+    Nb = cross(N, Nt);
+}
+
+
 vec3 computeDiffuse(WaveFrontMaterial mat, vec3 lightDir, vec3 normal)
 {
   // Lambertian

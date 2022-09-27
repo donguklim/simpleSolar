@@ -66,11 +66,14 @@ void main()
     }
 
 
-    vec3 normalVec = normalize(i_worldNrm);
+    vec3 normal = normalize(i_worldNrm);
 
     if(pcRaster.planetType == eEarth)
     {
-        normalVec = normalize(texture(textureSamplers[objResource.txtOffset + 1], i_texCoord).xyz);
+        vec3 textNormal = texture(textureSamplers[objResource.txtOffset + 1], i_texCoord).xyz;
+        vec3 tangent, bitangent;
+        createCoordinateSystem(normal, tangent, bitangent);
+        normal = textNormal.y * bitangent + textNormal.x * tangent + textNormal.z * normal;
     }
 
 
@@ -83,7 +86,7 @@ void main()
     vec3 lightDir = normalize(lightVec);
 
 
-    float dotNL = max(dot(normalVec, lightDir), 0.0);
+    float dotNL = max(dot(normal, lightDir), 0.0);
 
   // Result
   o_color = vec4(diffuse * dotNL, 1);
