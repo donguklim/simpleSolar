@@ -27,6 +27,14 @@
 #include "nvvk/resourceallocator_vk.hpp"
 #include "nvh/gltfscene.hpp"
 
+
+enum class Planet
+{
+    sun,
+    earth,
+    moon
+};
+
 //--------------------------------------------------------------------------------------------------
 // Simple rasterizer of OBJ objects
 // - Each OBJ loaded are stored in an `ObjModel` and referenced by a `ObjInstance`
@@ -40,7 +48,7 @@ public:
   void setup(const VkInstance& instance, const VkDevice& device, const VkPhysicalDevice& physicalDevice, uint32_t queueFamily) override;
   void createDescriptorSetLayout();
   void createGraphicsPipeline();
-  void loadModel(const std::string& filename, nvmath::mat4f transform = nvmath::mat4f(1), bool loadNorm = false);
+  void loadModel(const std::string& filename, Planet planet);
   void updateDescriptorSet();
   void createUniformBuffer();
   void createObjDescriptionBuffer();
@@ -62,7 +70,7 @@ public:
 
   struct ObjInstance
   {
-    nvmath::mat4f transform;    // Matrix of the instance
+    Planet planet;
     uint32_t      objIndex{0};  // Model index reference
   };
 

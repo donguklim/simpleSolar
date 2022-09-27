@@ -185,7 +185,7 @@ void HelloVulkan::createGraphicsPipeline()
 //--------------------------------------------------------------------------------------------------
 // Loading the OBJ file and setting up all buffers
 //
-void HelloVulkan::loadModel(const std::string& filename, nvmath::mat4f transform, bool loadNorm)
+void HelloVulkan::loadModel(const std::string& filename, Planet planet)
 {
   LOGI("Loading File:  %s \n", filename.c_str());
   ObjLoader loader;
@@ -208,7 +208,7 @@ void HelloVulkan::loadModel(const std::string& filename, nvmath::mat4f transform
 
   std::vector<std::string> textures;
   textures.emplace_back(filePath + "/diffuse.png");
-  if (loadNorm)
+  if (planet == Planet::earth)
   {
 
   }
@@ -223,7 +223,7 @@ void HelloVulkan::loadModel(const std::string& filename, nvmath::mat4f transform
 
   // Keeping transformation matrix of the instance
   ObjInstance instance;
-  instance.transform = transform;
+  instance.planet = planet;
   instance.objIndex  = static_cast<uint32_t>(m_objModel.size());
   m_instances.push_back(instance);
 
@@ -398,8 +398,17 @@ void HelloVulkan::rasterize(const VkCommandBuffer& cmdBuf, const float elapse)
   {
     auto& model            = m_objModel[inst.objIndex];
     m_pcRaster.objIndex    = inst.objIndex;  // Telling which object is drawn
-    m_pcRaster.modelMatrix = inst.transform;
-    m_pcRaster.modelMatrix = nvmath::mat4f(1).rotate(nv_two_pi * elapse / 30.0f, nvmath::vec3f(0, 0, 1.0f));
+    if (inst.planet == Planet::earth)
+    {
+    }
+    else if (inst.planet == Planet::moon)
+    {
+
+    }
+    else
+    {
+        m_pcRaster.modelMatrix = nvmath::mat4f(1).rotate(nv_two_pi * elapse / 30.0f, nvmath::vec3f(0, 0, 1.0f));
+    }
 
     vkCmdPushConstants(cmdBuf, m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
                        sizeof(PushConstantRaster), &m_pcRaster);

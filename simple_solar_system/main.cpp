@@ -153,7 +153,8 @@ int main(int argc, char** argv)
   // Creation of the example
   //helloVk.loadModel(nvh::findFile("model/earth/cube_multi.obj", defaultSearchPaths, true));
   //helloVk.loadModel(nvh::findFile("model/earth/geometry.obj", defaultSearchPaths, true));
-  helloVk.loadModel(nvh::findFile("model/sun/geometry.obj", defaultSearchPaths, true));
+  helloVk.loadModel(nvh::findFile("model/sun/geometry.obj", defaultSearchPaths, true), Planet::sun);
+  //helloVk.loadModel(nvh::findFile("model/earth/geometry.obj", defaultSearchPaths, true), Planet::earth);
 
   helloVk.createOffscreenRender();
   helloVk.createDescriptorSetLayout();
