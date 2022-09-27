@@ -46,9 +46,9 @@ add_subdirectory(simple_solar_system)
 
 #--------------------------------------------------------------------------------------------------
 # Install - copying the media directory
-install(DIRECTORY "media" 
+install(DIRECTORY "model" 
         CONFIGURATIONS Release 
         DESTINATION "bin_${ARCH}")
-install(DIRECTORY "media" 
+install(DIRECTORY "model" 
         CONFIGURATIONS Debug 
         DESTINATION "bin_${ARCH}_debug")
