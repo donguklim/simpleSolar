@@ -210,7 +210,7 @@ void HelloVulkan::loadModel(const std::string& filename, Planet planet)
   textures.emplace_back(filePath + "/diffuse.png");
   if (planet == Planet::earth)
   {
-
+      m_earthRadius = loader.m_vertices[0].pos.norm() * m_earthScale;
   }
 
   createTextureImages(cmdBuf, textures);
@@ -225,7 +225,6 @@ void HelloVulkan::loadModel(const std::string& filename, Planet planet)
   ObjInstance instance;
   instance.planet = planet;
   instance.objIndex  = static_cast<uint32_t>(m_objModel.size());
-  instance.radius = loader.m_vertices[0].pos.norm();
   m_instances.push_back(instance);
 
   // Creating information for device access
@@ -401,16 +400,21 @@ void HelloVulkan::rasterize(const VkCommandBuffer& cmdBuf, const float elapse)
     m_pcRaster.objIndex    = inst.objIndex;  // Telling which object is drawn
     if (inst.planet == Planet::earth)
     {
-        
         m_pcRaster.modelMatrix = nvmath::mat4f(1)\
-            .scale(0.5f)\
             .rotate(nv_two_pi * elapse / 365.0f, nvmath::vec3f(0, 1.0f, 0))\
-            .translate(nvmath::vec3f(inst.radius * 8, 0, 0))\
-            .rotate(nv_two_pi * elapse / 1.0f, nvmath::vec3f(0, 1.0f, 0));
+            .translate(nvmath::vec3f(m_earthRadius * 8, 0, 0))\
+            .rotate(nv_two_pi * elapse / 1.0f, nvmath::vec3f(0, 1.0f, 0))\
+            .scale(m_earthScale);
     }
     else if (inst.planet == Planet::moon)
     {
-        
+        m_pcRaster.modelMatrix = nvmath::mat4f(1)\
+            .rotate(nv_two_pi * elapse / 365.0f, nvmath::vec3f(0, 1.0f, 0))\
+            .translate(nvmath::vec3f(m_earthRadius * 8, 0, 0))\
+            .rotate(nv_two_pi * elapse / 27.0f, nvmath::vec3f(0, 1.0f, 0))\
+            .translate(nvmath::vec3f(m_earthRadius * 2, 0, 0))\
+            .rotate(nv_two_pi * elapse / 27.0f, nvmath::vec3f(0, 1.0f, 0))\
+            .scale(0.2f);
     }
     else
     {

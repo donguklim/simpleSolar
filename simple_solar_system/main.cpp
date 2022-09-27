@@ -155,6 +155,7 @@ int main(int argc, char** argv)
   //helloVk.loadModel(nvh::findFile("model/earth/geometry.obj", defaultSearchPaths, true));
   helloVk.loadModel(nvh::findFile("model/sun/geometry.obj", defaultSearchPaths, true), Planet::sun);
   helloVk.loadModel(nvh::findFile("model/earth/geometry.obj", defaultSearchPaths, true), Planet::earth);
+  helloVk.loadModel(nvh::findFile("model/moon/geometry.obj", defaultSearchPaths, true), Planet::moon);
 
   helloVk.createOffscreenRender();
   helloVk.createDescriptorSetLayout();

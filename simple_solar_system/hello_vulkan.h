@@ -71,10 +71,11 @@ public:
   struct ObjInstance
   {
     Planet planet;
-    float radius;
     uint32_t      objIndex{0};  // Model index reference
   };
 
+  float m_earthRadius;
+  float m_earthScale{ 0.5f };
 
   // Information pushed at each draw call
   PushConstantRaster m_pcRaster{
