@@ -46,10 +46,12 @@ START_BINDING(SceneBindings)
   eTextures = 2   // Access to textures
 END_BINDING();
 
-START_BINDING(RtxBindings)
-  eTlas     = 0,  // Top-level acceleration structure
-  eOutImage = 1   // Ray tracer output image
+START_BINDING(PlanetType)
+	sun = 0,
+	earth = 1,
+	moon = 2
 END_BINDING();
+
 // clang-format on
 
 
@@ -78,18 +80,9 @@ struct PushConstantRaster
   vec3  lightPosition;
   uint  objIndex;
   float lightIntensity;
-  int   lightType;
+  int	planetType;
 };
 
-
-// Push constant structure for the ray tracer
-struct PushConstantRay
-{
-  vec4  clearColor;
-  vec3  lightPosition;
-  float lightIntensity;
-  int   lightType;
-};
 
 struct Vertex  // See ObjLoader, copy of VertexObj, could be compressed for device
 {

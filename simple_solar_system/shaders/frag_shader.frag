@@ -57,19 +57,11 @@ void main()
   ObjDesc    objResource = objDesc.i[pcRaster.objIndex];
   vec3 N = normalize(i_worldNrm);
 
-  // Vector toward light
-  vec3  L;
-  float lightIntensity = pcRaster.lightIntensity;
-  if(pcRaster.lightType == 0)
+
+
+  if(pcRaster.planetType == 1)
   {
-    vec3  lDir     = pcRaster.lightPosition - i_worldPos;
-    float d        = length(lDir);
-    lightIntensity = pcRaster.lightIntensity / (d * d);
-    L              = normalize(lDir);
-  }
-  else
-  {
-    L = normalize(pcRaster.lightPosition);
+  
   }
 
 
