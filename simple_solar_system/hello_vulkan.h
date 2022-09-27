@@ -19,12 +19,13 @@
 
 #pragma once
 
+#include "shaders/host_device.h"
 #include "nvvk/appbase_vk.hpp"
 #include "nvvk/debug_util_vk.hpp"
 #include "nvvk/descriptorsets_vk.hpp"
 #include "nvvk/memallocator_dma_vk.hpp"
 #include "nvvk/resourceallocator_vk.hpp"
-#include "shaders/host_device.h"
+#include "nvh/gltfscene.hpp"
 
 //--------------------------------------------------------------------------------------------------
 // Simple rasterizer of OBJ objects
@@ -56,8 +57,7 @@ public:
     uint32_t     nbVertices{0};
     nvvk::Buffer vertexBuffer;    // Device buffer of all 'Vertex'
     nvvk::Buffer indexBuffer;     // Device buffer of the indices forming triangles
-    nvvk::Buffer matColorBuffer;  // Device buffer of array of 'Wavefront material'
-    nvvk::Buffer matIndexBuffer;  // Device buffer of array of 'Wavefront material'
+    nvvk::Buffer   uvBuffer;
   };
 
   struct ObjInstance
@@ -94,6 +94,7 @@ public:
   nvvk::Buffer m_bObjDesc;  // Device buffer of the OBJ descriptions
 
   std::vector<nvvk::Texture> m_textures;  // vector of all textures of the scene
+  std::vector<nvvk::Texture> m_normal_textures;  // vector of all textures of the scene
 
 
   nvvk::ResourceAllocatorDma m_alloc;  // Allocator for buffer, images, acceleration structures

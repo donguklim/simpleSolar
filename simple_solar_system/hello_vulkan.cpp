@@ -209,8 +209,6 @@ void HelloVulkan::loadModel(const std::string& filename, nvmath::mat4f transform
   VkBufferUsageFlags flag   = VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
   model.vertexBuffer        = m_alloc.createBuffer(cmdBuf, loader.m_vertices, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | flag);
   model.indexBuffer         = m_alloc.createBuffer(cmdBuf, loader.m_indices, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | flag);
-  model.matColorBuffer = m_alloc.createBuffer(cmdBuf, loader.m_materials, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | flag);
-  model.matIndexBuffer = m_alloc.createBuffer(cmdBuf, loader.m_matIndx, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | flag);
   // Creates all textures found and find the offset for this model
   auto txtOffset = static_cast<uint32_t>(m_textures.size());
   createTextureImages(cmdBuf, loader.m_textures);
@@ -220,8 +218,6 @@ void HelloVulkan::loadModel(const std::string& filename, nvmath::mat4f transform
   std::string objNb = std::to_string(m_objModel.size());
   m_debug.setObjectName(model.vertexBuffer.buffer, (std::string("vertex_" + objNb)));
   m_debug.setObjectName(model.indexBuffer.buffer, (std::string("index_" + objNb)));
-  m_debug.setObjectName(model.matColorBuffer.buffer, (std::string("mat_" + objNb)));
-  m_debug.setObjectName(model.matIndexBuffer.buffer, (std::string("matIdx_" + objNb)));
 
   // Keeping transformation matrix of the instance
   ObjInstance instance;
@@ -234,8 +230,6 @@ void HelloVulkan::loadModel(const std::string& filename, nvmath::mat4f transform
   desc.txtOffset            = txtOffset;
   desc.vertexAddress        = nvvk::getBufferDeviceAddress(m_device, model.vertexBuffer.buffer);
   desc.indexAddress         = nvvk::getBufferDeviceAddress(m_device, model.indexBuffer.buffer);
-  desc.materialAddress      = nvvk::getBufferDeviceAddress(m_device, model.matColorBuffer.buffer);
-  desc.materialIndexAddress = nvvk::getBufferDeviceAddress(m_device, model.matIndexBuffer.buffer);
 
   // Keeping the obj host model and device description
   m_objModel.emplace_back(model);
@@ -361,8 +355,6 @@ void HelloVulkan::destroyResources()
   {
     m_alloc.destroy(m.vertexBuffer);
     m_alloc.destroy(m.indexBuffer);
-    m_alloc.destroy(m.matColorBuffer);
-    m_alloc.destroy(m.matIndexBuffer);
   }
 
   for(auto& t : m_textures)
