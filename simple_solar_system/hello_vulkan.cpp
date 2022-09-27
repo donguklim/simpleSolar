@@ -401,6 +401,7 @@ void HelloVulkan::rasterize(const VkCommandBuffer& cmdBuf, const float elapse)
     m_pcRaster.objIndex    = inst.objIndex;  // Telling which object is drawn
     if (inst.planet == PlanetType::eEarth)
     {
+        m_pcRaster.planetType = PlanetType::eEarth;
         m_pcRaster.modelMatrix = nvmath::mat4f(1)\
             .rotate(nv_two_pi * elapse / 365.0f, nvmath::vec3f(0, 1.0f, 0))\
             .translate(nvmath::vec3f(m_earthRadius * 8, 0, 0))\
@@ -409,6 +410,7 @@ void HelloVulkan::rasterize(const VkCommandBuffer& cmdBuf, const float elapse)
     }
     else if (inst.planet == PlanetType::eMoon)
     {
+        m_pcRaster.planetType = PlanetType::eMoon;
         m_pcRaster.modelMatrix = nvmath::mat4f(1)\
             .rotate(nv_two_pi * elapse / 365.0f, nvmath::vec3f(0, 1.0f, 0))\
             .translate(nvmath::vec3f(m_earthRadius * 8, 0, 0))\
@@ -419,6 +421,7 @@ void HelloVulkan::rasterize(const VkCommandBuffer& cmdBuf, const float elapse)
     }
     else
     {
+        m_pcRaster.planetType = PlanetType::eSun;
         m_pcRaster.modelMatrix = nvmath::mat4f(1).rotate(nv_two_pi * elapse / 30.0f, nvmath::vec3f(0, 1.0f, 0.0f));
     }
 

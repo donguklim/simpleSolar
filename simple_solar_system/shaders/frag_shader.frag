@@ -54,28 +54,37 @@ layout(binding = eTextures) uniform sampler2D[] textureSamplers;
 void main()
 {
     // Material of the object
-  ObjDesc    objResource = objDesc.i[pcRaster.objIndex];
+    ObjDesc    objResource = objDesc.i[pcRaster.objIndex];
 
-  // Diffuse
-  vec3 diffuse = texture(textureSamplers[objResource.txtOffset], i_texCoord).xyz;
+    // Diffuse
+    vec3 diffuse = texture(textureSamplers[objResource.txtOffset], i_texCoord).xyz;
 
-  if(pcRaster.planetType == eSun)
-  {
-    o_color = vec4(diffuse, 1);
-    return;
-  }
-
-
-  vec3 N = normalize(i_worldNrm);
-
-  if(pcRaster.planetType == eEarth)
-  {
-    N = texture(textureSamplers[objResource.txtOffset + 1], i_texCoord).xyz;
-  }
+    if(pcRaster.planetType == eSun)
+    {
+        o_color = vec4(diffuse, 1);
+        return;
+    }
 
 
-  
+    vec3 normalVec = normalize(i_worldNrm);
+
+    if(pcRaster.planetType == eEarth)
+    {
+        normalVec = normalize(texture(textureSamplers[objResource.txtOffset + 1], i_texCoord).xyz);
+    }
+
+
+    vec3  L;
+    float lightIntensity = pcRaster.lightIntensity;
+
+    vec3 lightVec = vec3(0.0f, 0.0f, 0.0f) - i_worldPos;
+    float d = length(lightVec);
+    //lightIntensity = pcRaster.lightIntensity / (d * d);
+    vec3 lightDir = normalize(lightVec);
+
+
+    float dotNL = max(dot(normalVec, lightDir), 0.0);
 
   // Result
-  o_color = vec4(diffuse, 1);
+  o_color = vec4(diffuse * dotNL, 1);
 }

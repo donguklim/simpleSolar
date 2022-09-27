@@ -40,7 +40,6 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/media DESTINATION ${OUTPUT_PATH})
 
 
 #--------------------------------------------------------------------------------------------------
-add_subdirectory(simple_solar)
 add_subdirectory(simple_solar_system)
 
 
