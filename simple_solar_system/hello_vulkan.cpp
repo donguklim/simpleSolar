@@ -210,6 +210,7 @@ void HelloVulkan::loadModel(const std::string& filename, PlanetType planet)
   textures.emplace_back(filePath + "/diffuse.png");
   if (planet == PlanetType::earth)
   {
+      textures.emplace_back(filePath + "/normal.png");
       m_earthRadius = loader.m_vertices[0].pos.norm() * m_earthScale;
   }
 

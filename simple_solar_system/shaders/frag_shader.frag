@@ -61,7 +61,7 @@ void main()
 
   if(pcRaster.planetType == 1)
   {
-  
+    N = texture(textureSamplers[objResource.txtOffset + 1], i_texCoord).xyz;
   }
 
 
