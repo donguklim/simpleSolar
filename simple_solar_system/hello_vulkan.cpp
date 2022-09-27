@@ -380,7 +380,7 @@ void HelloVulkan::destroyResources()
 //--------------------------------------------------------------------------------------------------
 // Drawing the scene in raster mode
 //
-void HelloVulkan::rasterize(const VkCommandBuffer& cmdBuf)
+void HelloVulkan::rasterize(const VkCommandBuffer& cmdBuf, const float elapse)
 {
   VkDeviceSize offset{0};
 
@@ -399,6 +399,7 @@ void HelloVulkan::rasterize(const VkCommandBuffer& cmdBuf)
     auto& model            = m_objModel[inst.objIndex];
     m_pcRaster.objIndex    = inst.objIndex;  // Telling which object is drawn
     m_pcRaster.modelMatrix = inst.transform;
+    m_pcRaster.modelMatrix = nvmath::mat4f(1).rotate(nv_two_pi * elapse / 30.0f, nvmath::vec3f(0, 0, 1.0f));
 
     vkCmdPushConstants(cmdBuf, m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
                        sizeof(PushConstantRaster), &m_pcRaster);

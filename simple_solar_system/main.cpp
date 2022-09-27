@@ -34,6 +34,7 @@
 #include "nvpsystem.hpp"
 #include "nvvk/commands_vk.hpp"
 #include "nvvk/context_vk.hpp"
+#include <chrono>
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -151,7 +152,8 @@ int main(int argc, char** argv)
 
   // Creation of the example
   //helloVk.loadModel(nvh::findFile("model/earth/cube_multi.obj", defaultSearchPaths, true));
-  helloVk.loadModel(nvh::findFile("model/earth/geometry.obj", defaultSearchPaths, true));
+  //helloVk.loadModel(nvh::findFile("model/earth/geometry.obj", defaultSearchPaths, true));
+  helloVk.loadModel(nvh::findFile("model/sun/geometry.obj", defaultSearchPaths, true));
 
   helloVk.createOffscreenRender();
   helloVk.createDescriptorSetLayout();
@@ -168,6 +170,8 @@ int main(int argc, char** argv)
 
   helloVk.setupGlfwCallbacks(window);
   ImGui_ImplGlfw_InitForVulkan(window, true);
+
+  auto start = std::chrono::system_clock::now();
 
   // Main loop
   while(!glfwWindowShouldClose(window))
@@ -210,6 +214,8 @@ int main(int argc, char** argv)
     clearValues[0].color        = {{clearColor[0], clearColor[1], clearColor[2], clearColor[3]}};
     clearValues[1].depthStencil = {1.0f, 0};
 
+    std::chrono::duration<float> diff = std::chrono::system_clock::now() - start;
+
     // Offscreen render pass
     {
       VkRenderPassBeginInfo offscreenRenderPassBeginInfo{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
@@ -221,7 +227,7 @@ int main(int argc, char** argv)
 
       // Rendering Scene
       vkCmdBeginRenderPass(cmdBuf, &offscreenRenderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-      helloVk.rasterize(cmdBuf);
+      helloVk.rasterize(cmdBuf, diff.count());
       vkCmdEndRenderPass(cmdBuf);
     }
 
