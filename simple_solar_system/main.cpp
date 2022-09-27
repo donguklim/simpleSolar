@@ -91,7 +91,7 @@ int main(int argc, char** argv)
 
   // Setup camera
   CameraManip.setWindowSize(SAMPLE_WIDTH, SAMPLE_HEIGHT);
-  CameraManip.setLookat(nvmath::vec3f(2.0f, 2.0f, 2.0f), nvmath::vec3f(0, 0, 0), nvmath::vec3f(0, 1, 0));
+  CameraManip.setLookat(nvmath::vec3f(800.0f, 800.0f, 800.0f), nvmath::vec3f(0, 0, 0), nvmath::vec3f(0, 1, 0));
 
   // Setup Vulkan
   if(!glfwVulkanSupported())
@@ -150,6 +150,7 @@ int main(int argc, char** argv)
   helloVk.initGUI(0);  // Using sub-pass 0
 
   // Creation of the example
+  //helloVk.loadModel(nvh::findFile("model/earth/cube_multi.obj", defaultSearchPaths, true));
   helloVk.loadModel(nvh::findFile("model/earth/geometry.obj", defaultSearchPaths, true));
 
   helloVk.createOffscreenRender();
