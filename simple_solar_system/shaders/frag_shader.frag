@@ -45,8 +45,6 @@ layout(location = 0) out vec4 o_color;
 
 layout(buffer_reference, scalar) buffer Vertices {Vertex v[]; }; // Positions of an object
 layout(buffer_reference, scalar) buffer Indices {uint i[]; }; // Triangle indices
-layout(buffer_reference, scalar) buffer Materials {WaveFrontMaterial m[]; }; // Array of all materials on an object
-layout(buffer_reference, scalar) buffer MatIndices {int i[]; }; // Material ID for each triangle
 
 layout(binding = eObjDescs, scalar) buffer ObjDesc_ { ObjDesc i[]; } objDesc;
 layout(binding = eTextures) uniform sampler2D[] textureSamplers;
@@ -55,6 +53,29 @@ layout(binding = eTextures) uniform sampler2D[] textureSamplers;
 
 void main()
 {
-  
-  o_color = vec4(0,0,0, 1);
+    // Material of the object
+  ObjDesc    objResource = objDesc.i[pcRaster.objIndex];
+  vec3 N = normalize(i_worldNrm);
+
+  // Vector toward light
+  vec3  L;
+  float lightIntensity = pcRaster.lightIntensity;
+  if(pcRaster.lightType == 0)
+  {
+    vec3  lDir     = pcRaster.lightPosition - i_worldPos;
+    float d        = length(lDir);
+    lightIntensity = pcRaster.lightIntensity / (d * d);
+    L              = normalize(lDir);
+  }
+  else
+  {
+    L = normalize(pcRaster.lightPosition);
+  }
+
+
+  // Diffuse
+  vec3 diffuse = texture(textureSamplers[objResource.txtOffset], i_texCoord).xyz;
+
+  // Result
+  o_color = vec4(diffuse, 1);
 }
