@@ -35,20 +35,6 @@ _add_package_VulkanSDK()
 _add_package_ImGUI()
 _add_nvpro_core_lib()
 
-# Enable Draco mesh compression if source and library are present
-IF(EXISTS ${CMAKE_SOURCE_DIR}/external/draco/draco_features.h)
-  message(STATUS "Draco source and library found at " ${CMAKE_SOURCE_DIR}/external/draco)
-  add_definitions(-DTINYGLTF_ENABLE_DRACO)
-  include_directories(external/draco)
-  find_library(DRACO_DECODER_LIBRARY NAMES dracodec PATHS ${CMAKE_SOURCE_DIR}/libs/draco REQUIRED)
-  IF (EXISTS ${DRACO_DECODER_LIBRARY})
-	message(STATUS "Draco decoder library found at " ${DRACO_DECODER_LIBRARY})
-	message(STATUS "Draco mesh compression enabled")
-  ELSE()
-    message(FATAL_ERROR "Draco decoder library not found!")
-  ENDIF()
-ENDIF()
-
 message(STATUS "COPY ${CMAKE_CURRENT_SOURCE_DIR}/media  to  ${OUTPUT_PATH}")
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/media DESTINATION ${OUTPUT_PATH})
 
