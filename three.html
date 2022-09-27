@@ -12,8 +12,7 @@
 			{
 				"imports": {
 					"three": "https://unpkg.com/three@0.144.0/build/three.module.js",
-					"three/js/": "https://unpkg.com/three@0.144.0/examples/js/",
-					"draco": "https://unpkg.com/three@0.144.0/examples/js/loaders/DRACOLoader.js"
+					"three/jsm/": "https://unpkg.com/three@0.144.0/examples/jsm/"
 				}
 			}
 		</script>
@@ -21,9 +20,8 @@
 	<body>
 		<script type="module">
 			import * as THREE from 'three';
-			//import { DRACOLoader } from 'three/js/loaders/DRACOLoader.js';
-			//const dracoLoader = new THREE.DRACOLoader();
-
+			import { DRACOLoader } from 'three/jsm/loaders/DRACOLoader.js';
+			//import { GLTFLoader } from 'three/jsm/loaders/GLTFLoader.js';
 			const loader = new DRACOLoader();
 
 
