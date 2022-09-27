@@ -91,7 +91,7 @@ int main(int argc, char** argv)
 
   // Setup camera
   CameraManip.setWindowSize(SAMPLE_WIDTH, SAMPLE_HEIGHT);
-  CameraManip.setLookat(nvmath::vec3f(800.0f, 800.0f, 800.0f), nvmath::vec3f(0, 0, 0), nvmath::vec3f(0, 1, 0));
+  CameraManip.setLookat(nvmath::vec3f(0.0f, 0.0f, 4500.0f), nvmath::vec3f(0, 0, 0), nvmath::vec3f(0, 1, 0));
 
   // Setup Vulkan
   if(!glfwVulkanSupported())
@@ -163,7 +163,7 @@ int main(int argc, char** argv)
   helloVk.createPostDescriptor();
   helloVk.createPostPipeline();
   helloVk.updatePostDescriptorSet();
-  nvmath::vec4f clearColor = nvmath::vec4f(1, 1, 1, 1.00f);
+  nvmath::vec4f clearColor = nvmath::vec4f(0, 0, 0, 1.00f);
 
 
   helloVk.setupGlfwCallbacks(window);
