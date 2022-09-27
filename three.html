@@ -23,10 +23,6 @@
 			import { DRACOLoader } from 'three/jsm/loaders/DRACOLoader.js';
 			//import { GLTFLoader } from 'three/jsm/loaders/GLTFLoader.js';
 			const loader = new DRACOLoader();
-
-
-			
-
 			const scene = new THREE.Scene();
 			const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
@@ -38,6 +34,39 @@
 			const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
 			const cube = new THREE.Mesh( geometry, material );
 			scene.add( cube );
+
+			loader.setDecoderPath( 'https://unpkg.com/three@0.144.0/examples/js/libs/draco/' );
+
+			// Optional: Pre-fetch Draco WASM/JS module.
+			loader.preload();
+
+			// Load a Draco geometry
+			loader.load(
+				// resource URL
+				'earth/geometry.drc',
+				// called when the resource is loaded
+				function ( geometry ) {
+
+					const material = new THREE.MeshStandardMaterial( { color: 0x606060 } );
+
+					console.log( geometry );
+					const mesh = new THREE.Mesh( geometry, material );
+					scene.add( mesh );
+
+				},
+				// called as loading progresses
+				function ( xhr ) {
+
+					console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+				},
+				// called when loading has errors
+				function ( error ) {
+
+					console.log( 'An error happened' );
+
+				}
+			);
 
 			camera.position.z = 5;
 
