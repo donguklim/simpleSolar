@@ -192,19 +192,19 @@ void HelloVulkan::loadModel(const std::string& modelPath)
     planetNames[PlanetType::eEarth] = "earth";
     planetNames[PlanetType::eMoon] = "moon";
 
-    std::array<uint32_t, 3> planetIndexOffsets;
-    std::array<uint32_t, 3> planetTxtOffsets;
 
 
     ObjLoader loader;
-    auto txtOffset = static_cast<uint32_t>(m_textures.size());
-    auto indexOffset = static_cast<uint32_t>(loader.m_indices.size());
+
 
     std::vector<std::string> textures;
     for (int i = 0; i < planetNames.size(); i++)
     {
-        planetIndexOffsets[i] = indexOffset;
-        planetTxtOffsets[i] = txtOffset;
+        ObjDesc desc;
+        desc.txtOffset = static_cast<uint32_t>(textures.size());
+        desc.indexOffset = static_cast<uint32_t>(loader.m_indices.size());
+        m_objDesc.emplace_back(desc);
+
         std::string filename = modelPath + "/" + planetNames[i] + "/geometry.obj";
         LOGI("Loading File:  %s \n", filename.c_str());
 
@@ -217,10 +217,6 @@ void HelloVulkan::loadModel(const std::string& modelPath)
             m_earthRadius = loader.m_vertices[0].pos.norm() * m_earthScale;
         }
 
-        ObjDesc desc;
-        desc.txtOffset = static_cast<uint32_t>(textures.size());
-        desc.indexOffset = static_cast<uint32_t>(loader.m_indices.size());
-        m_objDesc.emplace_back(desc);
     }
 
   ObjModel model;
@@ -399,55 +395,42 @@ void HelloVulkan::destroyResources()
 //
 void HelloVulkan::rasterize(const VkCommandBuffer& cmdBuf, const float elapse)
 {
-  VkDeviceSize offset{0};
+    VkDeviceSize offset{0};
 
-  m_debug.beginLabel(cmdBuf, "Rasterize");
+    m_debug.beginLabel(cmdBuf, "Rasterize");
 
-  // Dynamic Viewport
-  setViewport(cmdBuf);
+    // Dynamic Viewport
+    setViewport(cmdBuf);
 
-  // Drawing all triangles
-  vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, m_graphicsPipeline);
-  vkCmdBindDescriptorSets(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelineLayout, 0, 1, &m_descSet, 0, nullptr);
+    // Drawing all triangles
+    vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, m_graphicsPipeline);
+    vkCmdBindDescriptorSets(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelineLayout, 0, 1, &m_descSet, 0, nullptr);
 
+    auto& model = m_objModel[0];
+    m_pcRaster.earthMatrix = nvmath::mat4f(1)\
+        .rotate(nv_two_pi * elapse / 365.0f, nvmath::vec3f(0, 1.0f, 0))\
+        .translate(nvmath::vec3f(m_earthRadius * 8, 0, 0))\
+        .rotate(nv_two_pi * elapse / 1.0f, nvmath::vec3f(0, 1.0f, 0))\
+        .scale(m_earthScale);
 
-  for(const HelloVulkan::ObjInstance& inst : m_instances)
-  {
-    auto& model            = m_objModel[inst.objIndex];
-    m_pcRaster.objIndex    = inst.objIndex;  // Telling which object is drawn
-    if (inst.planet == PlanetType::eEarth)
-    {
-        m_pcRaster.planetType = PlanetType::eEarth;
-        m_pcRaster.modelMatrix = nvmath::mat4f(1)\
-            .rotate(nv_two_pi * elapse / 365.0f, nvmath::vec3f(0, 1.0f, 0))\
-            .translate(nvmath::vec3f(m_earthRadius * 8, 0, 0))\
-            .rotate(nv_two_pi * elapse / 1.0f, nvmath::vec3f(0, 1.0f, 0))\
-            .scale(m_earthScale);
-    }
-    else if (inst.planet == PlanetType::eMoon)
-    {
-        m_pcRaster.planetType = PlanetType::eMoon;
-        m_pcRaster.modelMatrix = nvmath::mat4f(1)\
-            .rotate(nv_two_pi * elapse / 365.0f, nvmath::vec3f(0, 1.0f, 0))\
-            .translate(nvmath::vec3f(m_earthRadius * 8, 0, 0))\
-            .rotate(nv_two_pi * elapse / 27.0f, nvmath::vec3f(0, 1.0f, 0))\
-            .translate(nvmath::vec3f(m_earthRadius * 2, 0, 0))\
-            .rotate(nv_two_pi * elapse / 27.0f, nvmath::vec3f(0, 1.0f, 0))\
-            .scale(0.2f);
-    }
-    else
-    {
-        m_pcRaster.planetType = PlanetType::eSun;
-        m_pcRaster.modelMatrix = nvmath::mat4f(1).rotate(nv_two_pi * elapse / 30.0f, nvmath::vec3f(0, 1.0f, 0.0f));
-    }
+    m_pcRaster.moonMatrix = nvmath::mat4f(1)\
+        .rotate(nv_two_pi * elapse / 365.0f, nvmath::vec3f(0, 1.0f, 0))\
+        .translate(nvmath::vec3f(m_earthRadius * 8, 0, 0))\
+        .rotate(nv_two_pi * elapse / 27.0f, nvmath::vec3f(0, 1.0f, 0))\
+        .translate(nvmath::vec3f(m_earthRadius * 2, 0, 0))\
+        .rotate(nv_two_pi * elapse / 27.0f, nvmath::vec3f(0, 1.0f, 0))\
+        .scale(0.2f);
+
+    m_pcRaster.sunMatrix = nvmath::mat4f(1).rotate(nv_two_pi * elapse / 30.0f, nvmath::vec3f(0, 1.0f, 0.0f));
+
 
     vkCmdPushConstants(cmdBuf, m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
-                       sizeof(PushConstantRaster), &m_pcRaster);
+                        sizeof(PushConstantRaster), &m_pcRaster);
     vkCmdBindVertexBuffers(cmdBuf, 0, 1, &model.vertexBuffer.buffer, &offset);
     vkCmdBindIndexBuffer(cmdBuf, model.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
     vkCmdDrawIndexed(cmdBuf, model.nbIndices, 1, 0, 0, 0);
-  }
-  m_debug.endLabel(cmdBuf);
+
+    m_debug.endLabel(cmdBuf);
 }
 
 //--------------------------------------------------------------------------------------------------

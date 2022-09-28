@@ -58,8 +58,8 @@ END_BINDING();
 // Information of a obj model when referenced in a shader
 struct ObjDesc
 {
-	uint32_t txtOffset;
-	uint32_t indexOffset;         
+	int txtOffset;
+	int indexOffset;         
 };
 
 // Uniform buffer set at each frame
@@ -73,11 +73,9 @@ struct GlobalUniforms
 // Push constant structure for the raster
 struct PushConstantRaster
 {
-  mat4  modelMatrix;  // matrix of the instance
-  vec3  lightPosition;
-  uint  objIndex;
-  float lightIntensity;
-  int	planetType;
+  mat4  sunMatrix;
+  mat4  moonMatrix;
+  mat4  earthMatrix;
 };
 
 

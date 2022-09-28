@@ -21,6 +21,7 @@
 #extension GL_ARB_separate_shader_objects : enable
 #extension GL_EXT_scalar_block_layout : enable
 #extension GL_GOOGLE_include_directive : enable
+#extension GL_EXT_scalar_block_layout : enable
 
 #extension GL_EXT_shader_explicit_arithmetic_types_int64 : require
 
@@ -30,6 +31,8 @@ layout(binding = 0) uniform _GlobalUniforms
 {
   GlobalUniforms uni;
 };
+
+layout(binding = eObjDescs, scalar) buffer ObjDesc_ { ObjDesc i[]; } objDesc;
 
 layout(push_constant) uniform _PushConstantRaster
 {
@@ -55,12 +58,32 @@ out gl_PerVertex
 
 void main()
 {
+    ObjDesc    sunDesc = objDesc.i[eSun];
+    ObjDesc    earthDesc = objDesc.i[eEarth];
+    ObjDesc    moonDesc = objDesc.i[eMoon];
+
+    mat4 modelMatrix;
+    if (sunDesc.indexOffset <= gl_VertexIndex)
+    {
+        modelMatrix = pcRaster.sunMatrix;
+    }
+
+    if (earthDesc.indexOffset <= gl_VertexIndex)
+    {
+        modelMatrix = pcRaster.earthMatrix;
+    }
+
+    if (moonDesc.indexOffset <= gl_VertexIndex)
+    {
+        modelMatrix = pcRaster.moonMatrix;
+    }
+
   vec3 origin = vec3(uni.viewInverse * vec4(0, 0, 0, 1));
 
-  o_worldPos = vec3(pcRaster.modelMatrix * vec4(i_position, 1.0));
+  o_worldPos = vec3(modelMatrix * vec4(i_position, 1.0));
   o_viewDir  = vec3(o_worldPos - origin);
   o_texCoord = i_texCoord;
-  o_worldNrm = mat3(pcRaster.modelMatrix) * i_normal;
+  o_worldNrm = mat3(modelMatrix) * i_normal;
 
   gl_Position = uni.viewProj * vec4(o_worldPos, 1.0);
 }

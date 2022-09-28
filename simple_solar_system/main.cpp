@@ -59,7 +59,7 @@ void renderUI(HelloVulkan& helloVk)
   {
     ImGui::SameLine();
 
-    ImGui::SliderFloat("Intensity", &helloVk.m_pcRaster.lightIntensity, 0.f, 150.f);
+    //ImGui::SliderFloat("Intensity", &helloVk.m_pcRaster.lightIntensity, 0.f, 150.f);
   }
 }
 

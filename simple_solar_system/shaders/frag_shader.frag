@@ -53,13 +53,30 @@ layout(binding = eTextures) uniform sampler2D[] textureSamplers;
 
 void main()
 {
-    // Material of the object
-    ObjDesc    objResource = objDesc.i[pcRaster.objIndex];
+    ObjDesc    sunDesc = objDesc.i[eSun];
+    ObjDesc    earthDesc = objDesc.i[eEarth];
+    ObjDesc    moonDesc = objDesc.i[eMoon];
+
+    uint planetType;
+    if (sunDesc.indexOffset <= 0 * 3)
+    {
+        planetType = eSun;
+    }
+
+    if (earthDesc.indexOffset <= 0 * 3)
+    {
+        planetType = eEarth;
+    }
+
+    if (moonDesc.indexOffset <= 0 * 3)
+    {
+        planetType = eMoon;
+    }
 
     // Diffuse
-    vec3 diffuse = texture(textureSamplers[objResource.txtOffset], i_texCoord).xyz;
+    vec3 diffuse = texture(textureSamplers[objDesc.i[planetType].txtOffset], i_texCoord).xyz;
 
-    if(pcRaster.planetType == eSun)
+    if(planetType == eSun)
     {
         o_color = vec4(diffuse, 1);
         return;
@@ -68,9 +85,9 @@ void main()
 
     vec3 normal = normalize(i_worldNrm);
 
-    if(pcRaster.planetType == eEarth)
+    if(planetType == eEarth)
     {
-        vec3 textNormal = texture(textureSamplers[objResource.txtOffset + 1], i_texCoord).xyz;
+        vec3 textNormal = texture(textureSamplers[earthDesc.txtOffset + 1], i_texCoord).xyz;
         vec3 tangent, bitangent;
         createCoordinateSystem(normal, tangent, bitangent);
         normal = textNormal.y * bitangent + textNormal.x * tangent + textNormal.z * normal;
@@ -78,7 +95,6 @@ void main()
 
 
     vec3  L;
-    float lightIntensity = pcRaster.lightIntensity;
 
     vec3 lightVec = vec3(0.0f, 0.0f, 0.0f) - i_worldPos;
     float d = length(lightVec);
