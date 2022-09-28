@@ -217,8 +217,10 @@ void HelloVulkan::loadModel(const std::string& modelPath)
             m_earthRadius = loader.m_vertices[0].pos.norm() * m_earthScale;
         }
 
-        txtOffset = static_cast<uint32_t>(m_textures.size());
-        indexOffset = static_cast<uint32_t>(loader.m_indices.size());
+        ObjDesc desc;
+        desc.txtOffset = static_cast<uint32_t>(textures.size());
+        desc.indexOffset = static_cast<uint32_t>(loader.m_indices.size());
+        m_objDesc.emplace_back(desc);
     }
 
   ObjModel model;
@@ -248,15 +250,9 @@ void HelloVulkan::loadModel(const std::string& modelPath)
   instance.objIndex  = static_cast<uint32_t>(m_objModel.size());
   m_instances.push_back(instance);
 
-  // Creating information for device access
-  ObjDesc desc;
-  desc.txtOffset            = 0;
-  desc.vertexAddress        = nvvk::getBufferDeviceAddress(m_device, model.vertexBuffer.buffer);
-  desc.indexAddress         = nvvk::getBufferDeviceAddress(m_device, model.indexBuffer.buffer);
-
   // Keeping the obj host model and device description
   m_objModel.emplace_back(model);
-  m_objDesc.emplace_back(desc);
+  
 }
 
 

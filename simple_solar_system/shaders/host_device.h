@@ -58,11 +58,8 @@ END_BINDING();
 // Information of a obj model when referenced in a shader
 struct ObjDesc
 {
-  int      txtOffset;             // Texture index offset in the array of textures
-  uint64_t vertexAddress;         // Address of the Vertex buffer
-  uint64_t indexAddress;          // Address of the index buffer
-  uint64_t materialAddress;       // Address of the material buffer
-  uint64_t materialIndexAddress;  // Address of the triangle material index buffer
+	uint32_t txtOffset;
+	uint32_t indexOffset;         
 };
 
 // Uniform buffer set at each frame
