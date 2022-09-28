@@ -150,9 +150,9 @@ int main(int argc, char** argv)
   // Creation of the example
   //helloVk.loadModel(nvh::findFile("model/earth/cube_multi.obj", defaultSearchPaths, true));
   //helloVk.loadModel(nvh::findFile("model/earth/geometry.obj", defaultSearchPaths, true));
-  helloVk.loadModel(nvh::findFile("model/sun/geometry.obj", defaultSearchPaths, true), PlanetType::eSun);
-  helloVk.loadModel(nvh::findFile("model/earth/geometry.obj", defaultSearchPaths, true), PlanetType::eEarth);
-  helloVk.loadModel(nvh::findFile("model/moon/geometry.obj", defaultSearchPaths, true), PlanetType::eMoon);
+  std::string sunFilePath = nvh::findFile("model/moon/geometry.obj", defaultSearchPaths, true);
+  std::string sunModelPath = nvh::getFilePath(sunFilePath.c_str());
+  helloVk.loadModel(nvh::getFilePath(sunModelPath.c_str()));
 
   helloVk.createOffscreenRender();
   helloVk.createDescriptorSetLayout();

@@ -185,12 +185,41 @@ void HelloVulkan::createGraphicsPipeline()
 //--------------------------------------------------------------------------------------------------
 // Loading the OBJ file and setting up all buffers
 //
-void HelloVulkan::loadModel(const std::string& filename, PlanetType planet)
+void HelloVulkan::loadModel(const std::string& modelPath)
 {
-  LOGI("Loading File:  %s \n", filename.c_str());
-  ObjLoader loader;
-  loader.loadModel(filename);
+    std::array<std::string, 3> planetNames;
+    planetNames[PlanetType::eSun] = "sun";
+    planetNames[PlanetType::eEarth] = "earth";
+    planetNames[PlanetType::eMoon] = "moon";
 
+    std::array<uint32_t, 3> planetIndexOffsets;
+    std::array<uint32_t, 3> planetTxtOffsets;
+
+
+    ObjLoader loader;
+    auto txtOffset = static_cast<uint32_t>(m_textures.size());
+    auto indexOffset = static_cast<uint32_t>(loader.m_indices.size());
+
+    std::vector<std::string> textures;
+    for (int i = 0; i < planetNames.size(); i++)
+    {
+        planetIndexOffsets[i] = indexOffset;
+        planetTxtOffsets[i] = txtOffset;
+        std::string filename = modelPath + "/" + planetNames[i] + "/geometry.obj";
+        LOGI("Loading File:  %s \n", filename.c_str());
+
+        loader.loadModel(filename);
+
+        textures.emplace_back(modelPath + "/" + planetNames[i] + "/diffuse.png");
+        if (i == PlanetType::eEarth)
+        {
+            textures.emplace_back(modelPath + "/" + planetNames[i] + "/normal.png");
+            m_earthRadius = loader.m_vertices[0].pos.norm() * m_earthScale;
+        }
+
+        txtOffset = static_cast<uint32_t>(m_textures.size());
+        indexOffset = static_cast<uint32_t>(loader.m_indices.size());
+    }
 
   ObjModel model;
   model.nbIndices  = static_cast<uint32_t>(loader.m_indices.size());
@@ -203,18 +232,10 @@ void HelloVulkan::loadModel(const std::string& filename, PlanetType planet)
   model.vertexBuffer        = m_alloc.createBuffer(cmdBuf, loader.m_vertices, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | flag);
   model.indexBuffer         = m_alloc.createBuffer(cmdBuf, loader.m_indices, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | flag);
   // Creates all textures found and find the offset for this model
-  auto txtOffset = static_cast<uint32_t>(m_textures.size());
-  auto filePath = nvh::getFilePath(filename.c_str());
-
-  std::vector<std::string> textures;
-  textures.emplace_back(filePath + "/diffuse.png");
-  if (planet == PlanetType::eEarth)
-  {
-      textures.emplace_back(filePath + "/normal.png");
-      m_earthRadius = loader.m_vertices[0].pos.norm() * m_earthScale;
-  }
 
   createTextureImages(cmdBuf, textures);
+  
+  
   cmdBufGet.submitAndWait(cmdBuf);
   m_alloc.finalizeAndReleaseStaging();
 
@@ -224,13 +245,12 @@ void HelloVulkan::loadModel(const std::string& filename, PlanetType planet)
 
   // Keeping transformation matrix of the instance
   ObjInstance instance;
-  instance.planet = planet;
   instance.objIndex  = static_cast<uint32_t>(m_objModel.size());
   m_instances.push_back(instance);
 
   // Creating information for device access
   ObjDesc desc;
-  desc.txtOffset            = txtOffset;
+  desc.txtOffset            = 0;
   desc.vertexAddress        = nvvk::getBufferDeviceAddress(m_device, model.vertexBuffer.buffer);
   desc.indexAddress         = nvvk::getBufferDeviceAddress(m_device, model.indexBuffer.buffer);
 

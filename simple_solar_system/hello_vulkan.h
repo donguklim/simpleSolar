@@ -41,7 +41,7 @@ public:
   void setup(const VkInstance& instance, const VkDevice& device, const VkPhysicalDevice& physicalDevice, uint32_t queueFamily) override;
   void createDescriptorSetLayout();
   void createGraphicsPipeline();
-  void loadModel(const std::string& filename, PlanetType planet);
+  void loadModel(const std::string& modelpath);
   void updateDescriptorSet();
   void createUniformBuffer();
   void createObjDescriptionBuffer();
