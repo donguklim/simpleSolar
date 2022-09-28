@@ -57,20 +57,38 @@ void main()
     ObjDesc    earthDesc = objDesc.i[eEarth];
     ObjDesc    moonDesc = objDesc.i[eMoon];
 
-    uint planetType;
-    if (sunDesc.indexOffset <= gl_PrimitiveID * 3)
-    {
-        planetType = eSun;
-    }
+    vec3 otherPlanetPos1;
+    vec3 otherPlanetPos2;
+    float otherPlanetRadius1;
+    float otherPlanetRadius2;
 
-    if (earthDesc.indexOffset <= gl_PrimitiveID * 3)
-    {
-        planetType = eEarth;
-    }
+    uint planetType;
+  
 
     if (moonDesc.indexOffset <= gl_PrimitiveID * 3)
     {
         planetType = eMoon;
+        otherPlanetPos1 = vec3(pcRaster.sunMatrix * vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        otherPlanetPos2 = vec3(pcRaster.earthMatrix * vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        otherPlanetRadius1 = sunDesc.planetRadius;
+        otherPlanetRadius1 = earthDesc.planetRadius;
+    }
+
+    else if (earthDesc.indexOffset <= gl_PrimitiveID * 3)
+    {
+        planetType = eEarth;
+        otherPlanetPos1 = vec3(pcRaster.sunMatrix * vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        otherPlanetPos2 = vec3(pcRaster.moonMatrix * vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        otherPlanetRadius1 = sunDesc.planetRadius;
+        otherPlanetRadius1 = moonDesc.planetRadius;
+    }
+    else
+    {
+        planetType = eSun;
+        otherPlanetPos1 = vec3(pcRaster.earthMatrix * vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        otherPlanetPos2 = vec3(pcRaster.moonMatrix * vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        otherPlanetRadius1 = earthDesc.planetRadius;
+        otherPlanetRadius1 = moonDesc.planetRadius;
     }
 
     // Diffuse
