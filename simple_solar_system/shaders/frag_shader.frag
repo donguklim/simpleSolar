@@ -57,38 +57,26 @@ void main()
     ObjDesc    earthDesc = objDesc.i[eEarth];
     ObjDesc    moonDesc = objDesc.i[eMoon];
 
-    vec3 otherPlanetPos1;
-    vec3 otherPlanetPos2;
-    float otherPlanetRadius1;
-    float otherPlanetRadius2;
+    vec3 otherPlanetsPos[2];
+    float otherPlanetsRadius[2];
 
     uint planetType;
   
+    vec3 sunPos = vec3(pcRaster.sunMatrix * vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
     if (moonDesc.indexOffset <= gl_PrimitiveID * 3)
     {
         planetType = eMoon;
-        otherPlanetPos1 = vec3(pcRaster.sunMatrix * vec4(0.0f, 0.0f, 0.0f, 1.0f));
-        otherPlanetPos2 = vec3(pcRaster.earthMatrix * vec4(0.0f, 0.0f, 0.0f, 1.0f));
-        otherPlanetRadius1 = sunDesc.planetRadius;
-        otherPlanetRadius1 = earthDesc.planetRadius;
     }
 
     else if (earthDesc.indexOffset <= gl_PrimitiveID * 3)
     {
         planetType = eEarth;
-        otherPlanetPos1 = vec3(pcRaster.sunMatrix * vec4(0.0f, 0.0f, 0.0f, 1.0f));
-        otherPlanetPos2 = vec3(pcRaster.moonMatrix * vec4(0.0f, 0.0f, 0.0f, 1.0f));
-        otherPlanetRadius1 = sunDesc.planetRadius;
-        otherPlanetRadius1 = moonDesc.planetRadius;
     }
     else
     {
         planetType = eSun;
-        otherPlanetPos1 = vec3(pcRaster.earthMatrix * vec4(0.0f, 0.0f, 0.0f, 1.0f));
-        otherPlanetPos2 = vec3(pcRaster.moonMatrix * vec4(0.0f, 0.0f, 0.0f, 1.0f));
-        otherPlanetRadius1 = earthDesc.planetRadius;
-        otherPlanetRadius1 = moonDesc.planetRadius;
+
     }
 
     // Diffuse
@@ -100,6 +88,8 @@ void main()
         return;
     }
 
+    vec3 otherPlanetPos;
+    float otherPlanetRadius;
 
     vec3 normal = normalize(i_worldNrm);
 
@@ -109,18 +99,30 @@ void main()
         vec3 tangent, bitangent;
         createCoordinateSystem(normal, tangent, bitangent);
         normal = textNormal.y * bitangent + textNormal.x * tangent + textNormal.z * normal;
+
+        otherPlanetPos = vec3(pcRaster.moonMatrix * vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        otherPlanetRadius = moonDesc.planetRadius;
+    }
+    else 
+    {
+        otherPlanetPos = vec3(pcRaster.earthMatrix * vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        otherPlanetRadius = earthDesc.planetRadius;
     }
 
 
     vec3  L;
 
-    vec3 lightVec = vec3(0.0f, 0.0f, 0.0f) - i_worldPos;
+    vec3 lightVec = sunPos - i_worldPos;
     float d = length(lightVec);
     //lightIntensity = pcRaster.lightIntensity / (d * d);
     vec3 lightDir = normalize(lightVec);
+    float dotNL = max(dot(normal, lightDir), 0.01);
 
-
-    float dotNL = max(dot(normal, lightDir), 0.005);
+    float otherPlanetProj = dot(otherPlanetPos - i_worldPos, lightDir);
+    if (otherPlanetProj > 0 && length(i_worldPos + otherPlanetProj * lightDir  - otherPlanetPos) < otherPlanetRadius)
+    {
+        dotNL = 0.01;
+    }
 
   // Result
   o_color = vec4(diffuse * dotNL, 1);
