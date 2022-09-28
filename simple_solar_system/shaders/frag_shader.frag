@@ -109,19 +109,18 @@ void main()
         otherPlanetRadius = earthDesc.planetRadius;
     }
 
-
     vec3  L;
 
     vec3 lightVec = sunPos - i_worldPos;
     float d = length(lightVec);
     //lightIntensity = pcRaster.lightIntensity / (d * d);
     vec3 lightDir = normalize(lightVec);
-    float dotNL = max(dot(normal, lightDir), 0.01);
+    float dotNL = max(dot(normal, lightDir), 0.02);
 
     float otherPlanetProj = dot(otherPlanetPos - i_worldPos, lightDir);
     if (otherPlanetProj > 0 && length(i_worldPos + otherPlanetProj * lightDir  - otherPlanetPos) < otherPlanetRadius)
     {
-        dotNL = 0.01;
+        dotNL = 0.02;
     }
 
   // Result
