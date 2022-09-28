@@ -61,7 +61,7 @@ void HelloVulkan::updateUniformBuffer(const VkCommandBuffer& cmdBuf)
   const float    aspectRatio = m_size.width / static_cast<float>(m_size.height);
   GlobalUniforms hostUBO     = {};
   const auto&    view        = CameraManip.getMatrix();
-  const auto&    proj        = nvmath::perspectiveVK(CameraManip.getFov(), aspectRatio, 0.0000001f, 100000.0f);
+  const auto&    proj        = nvmath::perspectiveVK(CameraManip.getFov(), aspectRatio, 0.1f, 100000.0f);
   // proj[1][1] *= -1;  // Inverting Y for Vulkan (not needed with perspectiveVK).
 
   hostUBO.viewProj    = proj * view;
@@ -168,6 +168,7 @@ void HelloVulkan::createGraphicsPipeline()
   std::vector<std::string>                paths = defaultSearchPaths;
   nvvk::GraphicsPipelineGeneratorCombined gpb(m_device, m_pipelineLayout, m_offscreenRenderPass);
   gpb.depthStencilState.depthTestEnable = true;
+  gpb.depthStencilState.depthWriteEnable = true;
   gpb.addShader(nvh::loadFile("spv/vert_shader.vert.spv", true, paths, true), VK_SHADER_STAGE_VERTEX_BIT);
   gpb.addShader(nvh::loadFile("spv/frag_shader.frag.spv", true, paths, true), VK_SHADER_STAGE_FRAGMENT_BIT);
   gpb.addBindingDescription({0, sizeof(VertexObj)});
@@ -192,10 +193,7 @@ void HelloVulkan::loadModel(const std::string& modelPath)
     planetNames[PlanetType::eEarth] = "earth";
     planetNames[PlanetType::eMoon] = "moon";
 
-
-
     ObjLoader loader;
-
 
     std::vector<std::string> textures;
     for (int i = 0; i < planetNames.size(); i++)
