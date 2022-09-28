@@ -58,17 +58,17 @@ void main()
     ObjDesc    moonDesc = objDesc.i[eMoon];
 
     uint planetType;
-    if (sunDesc.indexOffset <= 0 * 3)
+    if (sunDesc.indexOffset <= gl_PrimitiveID * 3)
     {
         planetType = eSun;
     }
 
-    if (earthDesc.indexOffset <= 0 * 3)
+    if (earthDesc.indexOffset <= gl_PrimitiveID * 3)
     {
         planetType = eEarth;
     }
 
-    if (moonDesc.indexOffset <= 0 * 3)
+    if (moonDesc.indexOffset <= gl_PrimitiveID * 3)
     {
         planetType = eMoon;
     }
