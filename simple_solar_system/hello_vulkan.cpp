@@ -203,7 +203,7 @@ void HelloVulkan::loadModel(const std::string& modelPath)
         ObjDesc desc;
         desc.txtOffset = static_cast<uint32_t>(textures.size());
         desc.indexOffset = static_cast<uint32_t>(loader.m_indices.size());
-        m_objDesc.emplace_back(desc);
+        
 
         std::string filename = modelPath + "/" + planetNames[i] + "/geometry.obj";
         LOGI("Loading File:  %s \n", filename.c_str());
@@ -214,9 +214,19 @@ void HelloVulkan::loadModel(const std::string& modelPath)
         if (i == PlanetType::eEarth)
         {
             textures.emplace_back(modelPath + "/" + planetNames[i] + "/normal.png");
-            m_earthRadius = loader.m_vertices[0].pos.norm() * m_earthScale;
+            desc.planetRadius = loader.m_vertices[0].pos.norm() * m_earthScale;
+            m_earthRadius = desc.planetRadius;
         }
-
+        else if (i == PlanetType::eMoon)
+        {
+            desc.planetRadius = loader.m_vertices[0].pos.norm() * m_moonScale;
+        }
+        else 
+        {
+            desc.planetRadius = loader.m_vertices[0].pos.norm() * m_sunScale;
+        }
+        
+        m_objDesc.emplace_back(desc);
     }
 
   ObjModel model;
@@ -419,9 +429,9 @@ void HelloVulkan::rasterize(const VkCommandBuffer& cmdBuf, const float elapse)
         .rotate(nv_two_pi * elapse / 27.0f, nvmath::vec3f(0, 1.0f, 0))\
         .translate(nvmath::vec3f(m_earthRadius * 2, 0, 0))\
         .rotate(nv_two_pi * elapse / 27.0f, nvmath::vec3f(0, 1.0f, 0))\
-        .scale(0.2f);
+        .scale(m_moonScale);
 
-    m_pcRaster.sunMatrix = nvmath::mat4f(1).rotate(nv_two_pi * elapse / 30.0f, nvmath::vec3f(0, 1.0f, 0.0f));
+    m_pcRaster.sunMatrix = nvmath::mat4f(1).rotate(nv_two_pi * elapse / 30.0f, nvmath::vec3f(0, 1.0f, 0.0f)).scale(m_sunScale);
 
 
     vkCmdPushConstants(cmdBuf, m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,

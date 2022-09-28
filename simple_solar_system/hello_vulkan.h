@@ -69,6 +69,8 @@ public:
 
   float m_earthRadius;
   float m_earthScale{ 0.5f };
+  float m_moonScale{ 0.2f };
+  float m_sunScale{ 1.0f };
 
   // Information pushed at each draw call
   PushConstantRaster m_pcRaster{

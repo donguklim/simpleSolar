@@ -59,7 +59,8 @@ END_BINDING();
 struct ObjDesc
 {
 	int txtOffset;
-	int indexOffset;         
+	int indexOffset;
+	float planetRadius;
 };
 
 // Uniform buffer set at each frame
